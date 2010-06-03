@@ -1,0 +1,129 @@
+body {
+    font-family: Helvetica, sans-serif;
+    margin: 0px;
+}
+
+div#content, div#oops {
+    margin: 6px;
+}
+
+.project {
+    margin-bottom: 12pt;
+}
+
+hr {
+    color: #929292;
+    background-color: #929292;
+}
+
+.fails {
+    font-weight: bold;
+	margin-bottom: 4pt;
+    color: #FF0500;
+}
+
+.ok {
+    color: #00BB00;
+}
+
+.active {
+    font-style: italic;
+}
+
+.passes {
+    font-weight: bold;
+    font-size: 18pt;
+	margin-bottom: 4pt;
+    color: #00BB00;
+}
+
+.fail {
+}
+
+.compileFail {
+    background-color: #FFFE01;
+}
+
+.pass {
+}
+
+.projectName {
+    font-size: 24pt;
+	margin-bottom: 4pt;
+    color: #929292;
+}
+
+div#oopsWarning {
+    background-color: #FF0500;
+    color: #FFFE01;
+    position: relative;
+    top: -12px;
+    left: -12px;
+    margin: 0px 0px 12px 0px;
+    padding: 18pt;
+    font-size: 24pt;
+    font-weight: bold;
+    width: 100%;
+    clear: both;
+}
+
+div#bottom {
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    padding: 0px;
+    width: 100%;
+}
+
+
+div#bottomTabDiv {
+    text-align: right;
+    margin: 0px;
+    padding: 0px;
+}
+span#bottomTab {
+    border: 1px solid #FFCC00;
+    border-right-style: none;
+    border-bottom-style: none;
+    background-color: #fffab3;
+    margin: 0px;
+    font-weight: bold;
+    text-decoration: underline;
+    right: 0px;
+    clear: both;
+    position: relative;
+    top: -7px;
+    padding: 8px 12px;
+}
+
+div#bottomForm {
+    border-top: 1px solid #FFCC00;
+    background-color: #fffab3;
+    margin: 0px;
+    padding: 6px;
+    width: 100%;
+}
+
+div#bottomForm table {
+    width: 100%;
+}
+
+div#bottomForm td {
+    vertical-align: top;
+}
+
+label {
+    font-weight: bold;
+}
+
+.resultsTime {
+    position: absolute;
+    text-align: right;
+    float: right;
+    clear: none;
+    margin: 0px;
+    top: 0px;
+    right: 0px;
+    width: 100%;
+    padding: 8px 6px;
+}
