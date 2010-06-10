@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +29,13 @@ public class ResultsPageController extends BaseController {
     private final Calzone calzone;
     private final SBuildServer server;
     static private final String[] FAILURE_FONT_SIZES = new String[]{"18pt", "24pt", "30pt", "36pt", "42pt", "48pt", "60pt", "72pt", "84pt", "96pt", "112pt", "128pt", "144pt", "180pt", "216pt"};
+    static private final int[] REFRESH_FREQUENCIES = new int[]{5, 10, 15, 20, 30, 60, 120, 300};
+    private static final ValueWithLabel[] DISSOLVE_RATES = new ValueWithLabel[]{
+            new ValueWithLabel(1.0,  "direct transition"),
+            new ValueWithLabel(0.25, "fast (.4s) dissolve"),
+            new ValueWithLabel(0.1,  "medium (1s) dissolve"),
+            new ValueWithLabel(0.02, "slow (5s) dissolve")
+    };
 
     public ResultsPageController(SBuildServer server, Calzone calzone) {
         super(server);
@@ -145,6 +153,8 @@ public class ResultsPageController extends BaseController {
         boolean blink = parameterAsBoolean(request, "blink");
         boolean showDividers = parameterAsBoolean(request, "showDividers");
         boolean showTimeRemaining = parameterAsBoolean(request, "showTimeRemaining");
+        int frequency = ServletRequestUtils.getIntParameter(request, "frequency", 5);
+        double dissolveRate = ServletRequestUtils.getDoubleParameter(request, "dissolveRate", 1);
 
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("results", projects);
@@ -160,7 +170,11 @@ public class ResultsPageController extends BaseController {
         model.put("showTimeRemaining", showTimeRemaining);
         model.put("pendingInItalics", pendingInItalics);
         model.put("runningInItalics", runningInItalics);
-        model.put("formModel", new ResultsPageFormModel(buildsToDisplay, projectsToDisplay, failFontSize, dontShowGreenBuilds, runTogether, blink, showDividers, showTimeRemaining, pendingInItalics, runningInItalics));
+        model.put("frequency", frequency);
+        model.put("frequencies", REFRESH_FREQUENCIES);
+        model.put("dissolveRate", dissolveRate);
+        model.put("dissolveRates", DISSOLVE_RATES);
+        model.put("formModel", new ResultsPageFormModel(buildsToDisplay, projectsToDisplay, failFontSize, dontShowGreenBuilds, runTogether, blink, showDividers, showTimeRemaining, pendingInItalics, runningInItalics, frequency, dissolveRate));
 
         boolean isFragment = parameterAsBoolean(request, "fragment");
         if (isFragment) {
@@ -190,10 +204,30 @@ public class ResultsPageController extends BaseController {
         return buildsToDisplaySet;
     }
 
+    private static class ValueWithLabel {
+        private Object value;
+        private String label;
+
+        private ValueWithLabel(Object value, String label) {
+            this.label = label;
+            this.value = value;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+    }
+
     private static class ResultsPageFormModel {
         private final String[] buildsToDisplay;
         private final String[] projectsToDisplay;
         private final String failFontSize;
+        private final int frequency;
+        private final double dissolveRate;
         private final boolean dontShowGreenBuilds;
         private final boolean runTogether;
         private final boolean blink;
@@ -211,7 +245,7 @@ public class ResultsPageController extends BaseController {
                                     boolean showDividers,
                                     boolean showTimeRemaining,
                                     boolean pendingInItalics,
-                                    boolean runningInItalics) {
+                                    boolean runningInItalics, int frequency, double dissolveRate) {
             this.dontShowGreenBuilds = dontShowGreenBuilds;
             this.buildsToDisplay = buildsToDisplay;
             this.projectsToDisplay = projectsToDisplay;
@@ -222,6 +256,8 @@ public class ResultsPageController extends BaseController {
             this.showTimeRemaining = showTimeRemaining;
             this.pendingInItalics = pendingInItalics;
             this.runningInItalics = runningInItalics;
+            this.frequency = frequency;
+            this.dissolveRate = dissolveRate;
         }
 
         public String[] getBuildsToDisplay() {
@@ -262,6 +298,14 @@ public class ResultsPageController extends BaseController {
 
         public boolean isRunningInItalics() {
             return runningInItalics;
+        }
+
+        public int getFrequency() {
+            return frequency;
+        }
+
+        public double getDissolveRate() {
+            return dissolveRate;
         }
     }
 }

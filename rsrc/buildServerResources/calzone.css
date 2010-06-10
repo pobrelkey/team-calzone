@@ -3,8 +3,9 @@ body {
     margin: 0px;
 }
 
-div#content, div#oops {
+div#content, div#oldContent, div#oops {
     margin: 6px;
+    width: 100%
 }
 
 .project {
@@ -123,7 +124,7 @@ label {
     clear: none;
     margin: 0px;
     top: 0px;
-    right: 0px;
+    right: 6px;
     width: 100%;
     padding: 8px 6px;
 }

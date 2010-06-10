@@ -22,12 +22,18 @@
         }
     </style>
 </head>
-<body onload="refreshData()">
+<body onload="refreshData(<c:out value="${frequency}"/>, <c:out value="${dissolveRate}"/>)">
 
-<div id="content">
+<div id="content"    style="opacity: 1; filter:alpha(opacity=100); position:absolute">
     <%@ include file="results.jsp" %>
 </div>
-<div id="oops" style="display: none">
+<div id="oldContent" style="opacity: 0; filter:alpha(opacity=0);   position:absolute">
+    <!-- used by dissolve effect javascript - holds text to be faded out -->
+</div>
+<div id="newContent" style="display: none">
+    <!-- periodic-update javascript writes new status HTML into this div - dissolve javascript picks it up and fades it into the content div -->
+</div>
+<div id="oops"       style="display: none">
     <div id="oopsWarning">Error contacting build server!</div>
     <div id="oopsContent">
         <%@ include file="results.jsp" %>
@@ -50,6 +56,14 @@
                         <p>
                             <label for="failFontSize">Failure Font Size:</label>
                             <form:select id="failFontSize" path="failFontSize" items="${failFontSizes}" />
+                        </p>
+                        <p>
+                            <label for="frequency">Refresh Frequency (Seconds):</label>
+                            <form:select id="frequency" path="frequency" items="${frequencies}" />
+                        </p>
+                        <p>
+                            <label for="dissolveRate">Update Method:</label>
+                            <form:select id="dissolveRate" path="dissolveRate" items="${dissolveRates}" itemLabel="label" itemValue="value" />
                         </p>
                         <p>
                             <form:checkbox id="dontShowGreenBuilds" path="dontShowGreenBuilds"/>
