@@ -30,29 +30,35 @@
 <div id="oldContent" style="opacity: 0; filter:alpha(opacity=0);   position:absolute">
     <!-- used by dissolve effect javascript - holds text to be faded out -->
 </div>
-<div id="newContent" style="display: none">
-    <!-- periodic-update javascript writes new status HTML into this div - dissolve javascript picks it up and fades it into the content div -->
-</div>
-<div id="oops"       style="display: none">
+<div id="oops"       style="display: none; position:absolute">
     <div id="oopsWarning">Error contacting build server!</div>
     <div id="oopsContent">
         <%@ include file="results.jsp" %>
     </div>
+</div>
+<div id="newContent" style="display: none">
+    <!-- periodic-update javascript writes new status HTML into this div - dissolve javascript picks it up and fades it into the content div -->
 </div>
 
 <div id="bottom">
     <div id="bottomTabDiv">
         <span id="bottomTab" onClick="showHideSettings()">Settings...</span>
     </div>
-    <div id="bottomForm" style="display:none">
+    <div id="bottomForm" style="display: none">
         <form:form method="get" commandName="formModel">
             <table>
                 <tr>
-                    <td align="right"><label for="projects">Projects</label>&nbsp;&nbsp;</td>
-                    <td><form:select id="projects" path="projectsToDisplay" size="12" items="${projectNames}" />&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                    <td align="right"><label for="builds">Builds</label>&nbsp;&nbsp;</td>
-                    <td><form:select id="builds" path="buildsToDisplay" size="12" items="${buildNames}" />&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     <td>
+                        <p><label for="projects">Projects</label>&nbsp;&nbsp;&nbsp;</p>
+                        <nobr><form:select id="projects" path="projectsToDisplay" size="12" items="${projectNames}" />&nbsp;&nbsp;&nbsp;</nobr>
+                    </td>
+                    <td>
+                        <p><label for="builds">Builds</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                        <nobr><form:select id="builds" path="buildsToDisplay" size="12" items="${buildNames}" />&nbsp;&nbsp;&nbsp;</nobr>
+                    </td>
+                    <td>
+                        <p>other settings...</p>
+                        <div style="height: 160pt; overflow-y: auto; border: 1px solid #FFCC00">
                         <p>
                             <label for="failFontSize">Failure Font Size:</label>
                             <form:select id="failFontSize" path="failFontSize" items="${failFontSizes}" />
@@ -93,9 +99,10 @@
                             <form:checkbox id="blink" path="blink"/>
                             <label for="blink">Make Compile Failures <span style="text-decoration: blink">BLINK!</span></label>
                         </p>
-                        <p>
-                            <input type="submit" value="Refresh" />
-                        </p>
+                        </div>
+                    </td>
+                    <td>
+                        <nobr>&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="Refresh" />&nbsp;&nbsp;&nbsp;&nbsp;</nobr>
                     </td>
                 </tr>
             </table>
