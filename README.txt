@@ -15,8 +15,15 @@ freely (as in speech) redistributable.
 
 INSTALLING CALZONE
 
-Copy calzone.zip to the plugins directory under your TeamCity data directory,
-then bounce TeamCity.  Calzone should then be visible at:
+Try one of the following two methods depending on your TeamCity environment:
+
+Method 1: Copy calzone.zip to the plugins directory under your TeamCity
+data directory, then bounce TeamCity.
+
+Method 2: Copy calzone-server.jar to webapps/ROOT/WEB-INF/lib under your
+TeamCity installation directory, then bounce TeamCity.
+
+Calzone should then be visible at:
 
     http://YOUR_TEAMCITY_SERVER:8111/calzone/index.html
 

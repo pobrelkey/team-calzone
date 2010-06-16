@@ -9,6 +9,7 @@
       <root id="archive" name="calzone-server.jar">
         <element id="module-output" name="calzone" />
         <element id="dir-copy" path="$PROJECT_DIR$/rsrc" />
+        <element id="file-copy" path="$PROJECT_DIR$/plugin/teamcity-plugin.xml" />
       </root>
     </artifact>
   </component>
