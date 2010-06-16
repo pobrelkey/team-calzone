@@ -4,9 +4,9 @@
     <defaultAnt bundledAnt="true" />
   </component>
   <component name="ArtifactManager">
-    <artifact type="jar" build-on-make="true" name="calzone">
-      <output-path>$PROJECT_DIR$</output-path>
-      <root id="archive" name="calzone.jar">
+    <artifact type="jar" build-on-make="true" name="calzone-server">
+      <output-path>$PROJECT_DIR$/plugin/server</output-path>
+      <root id="archive" name="calzone-server.jar">
         <element id="module-output" name="calzone" />
         <element id="dir-copy" path="$PROJECT_DIR$/rsrc" />
       </root>

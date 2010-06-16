@@ -14,7 +14,7 @@
         <c:if test="${!(empty project.redBuilds) || (dontShowGreenBuilds && empty project.redBuilds)}">
             <div class="fails">
                 <c:forEach items="${project.redBuilds}" var="build" varStatus="status">
-                    <span class="<c:choose><c:when test="${build.compileFailure}">compileFail</c:when><c:otherwise>fail</c:otherwise></c:choose> <c:if test="${build.active}">active</c:if>"><c:out value="${build.buildName}" /><c:if test="${showTimeRemaining and !(empty build.timeRemaining)}"><span class="<c:choose><c:when test="${build.failing}">fail</c:when><c:otherwise>pass</c:otherwise></c:choose>"> (<c:out value="${build.timeRemaining}" />)</span></c:if></span><c:if test="${!status.last}"><c:choose><c:when test="${runTogether}">,</c:when><c:otherwise><br /></c:otherwise></c:choose></c:if>
+                    <span class="<c:choose><c:when test="${build.compileFailure}">compileFail</c:when><c:otherwise>fail</c:otherwise></c:choose> <c:if test="${build.active}">active</c:if>"><c:out value="${build.buildName}" /><c:if test="${showTimeRemaining and !(empty build.timeRemaining)}"><span class="<c:choose><c:when test="${build.failing}">fail</c:when><c:otherwise>pass</c:otherwise></c:choose>"> (<c:out value="${build.timeRemaining}" />)</span></c:if></span><c:if test="${!(empty build.responsibility)}"> &#174;</c:if><c:if test="${!status.last}"><c:choose><c:when test="${runTogether}">,</c:when><c:otherwise><br /></c:otherwise></c:choose></c:if>
                 </c:forEach>
                 <c:if test="${dontShowGreenBuilds && empty project.redBuilds}">
                     <span class="ok">OK</span>

@@ -10,8 +10,9 @@ public class BuildInfo implements Comparable<BuildInfo> {
     private final boolean active;
     private final boolean failing;
     private final String timeRemaining;
+    private final String responsibility;
 
-    public BuildInfo(String buildName, boolean green, boolean compileFailure, Date lastGoodBuildDate, boolean active, boolean failing, String timeRemaining) {
+    public BuildInfo(String buildName, boolean green, boolean compileFailure, Date lastGoodBuildDate, boolean active, boolean failing, String timeRemaining, String responsibility) {
         this.buildName = buildName;
         this.green = green;
         this.compileFailure = compileFailure;
@@ -19,6 +20,7 @@ public class BuildInfo implements Comparable<BuildInfo> {
         this.active = active;
         this.failing = failing;
         this.timeRemaining = timeRemaining;
+        this.responsibility = responsibility;
     }
 
     public String getBuildName() {
@@ -47,6 +49,10 @@ public class BuildInfo implements Comparable<BuildInfo> {
 
     public String getTimeRemaining() {
         return timeRemaining;
+    }
+
+    public String getResponsibility() {
+        return responsibility;
     }
 
     public int compareTo(BuildInfo buildInfo) {

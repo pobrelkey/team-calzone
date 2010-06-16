@@ -39,6 +39,7 @@ hr {
 }
 
 .fail {
+    color: #FF0500;
 }
 
 .compileFail {
@@ -46,6 +47,7 @@ hr {
 }
 
 .pass {
+    color: #00BB00;
 }
 
 .projectName {

@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -102,8 +101,10 @@ public class ResultsPageController extends BaseController {
             goodBuild = latestCompletedStatus.isSuccessful() && (goodBuild == null);
         }
 
+        String responsibility = sBuildType.getResponsibilityInfo().getComment();
+
         if (goodBuild != null) {
-            builds.add(new BuildInfo(sBuildType.getName(), goodBuild, latestCompletedIsCompileFailure, lastGoodBuildDate, active, failingBuild, timeRemaining));
+            builds.add(new BuildInfo(sBuildType.getName(), goodBuild, latestCompletedIsCompileFailure, lastGoodBuildDate, active, failingBuild, timeRemaining, responsibility));
         }
     }
 
