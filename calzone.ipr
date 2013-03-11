@@ -4,12 +4,12 @@
     <defaultAnt bundledAnt="true" />
   </component>
   <component name="ArtifactManager">
-    <artifact type="jar" build-on-make="true" name="calzone-server">
+    <artifact type="jar" build-on-make="true" name="calzone">
       <output-path>$PROJECT_DIR$/plugin/server</output-path>
-      <root id="archive" name="calzone-server.jar">
+      <root id="archive" name="calzone.jar">
         <element id="module-output" name="calzone" />
-        <element id="dir-copy" path="$PROJECT_DIR$/rsrc" />
         <element id="file-copy" path="$PROJECT_DIR$/plugin/teamcity-plugin.xml" />
+        <element id="dir-copy" path="$PROJECT_DIR$/rsrc" />
       </root>
     </artifact>
   </component>
@@ -34,7 +34,11 @@
       <entry name="*.jsp" />
       <entry name="*.css" />
     </wildcardResourcePatterns>
-    <annotationProcessing enabled="false" useClasspath="true" />
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <processorPath useClasspath="true" />
+      </profile>
+    </annotationProcessing>
   </component>
   <component name="CopyrightManager" default="">
     <module2copyright />
@@ -43,6 +47,9 @@
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
+  <component name="EntryPointsManager">
+    <entry_points version="2.0" />
+  </component>
   <component name="IdProvider" IDEtalkID="6804BC72DC20F87181B9B80717694563" />
   <component name="InspectionProjectProfileManager">
     <profiles>
@@ -51,7 +58,7 @@
         <option name="myLocal" value="false" />
         <inspection_tool class="HtmlDeprecatedTag" enabled="false" level="WARNING" enabled_by_default="false" />
         <inspection_tool class="JpaQlInspection" enabled="false" level="ERROR" enabled_by_default="false" />
-        <inspection_tool class="groupsTestNG" level="WARNING" enabled="true">
+        <inspection_tool class="groupsTestNG" enabled="true" level="WARNING" enabled_by_default="true">
           <option name="groups">
             <value>
               <list size="4">
@@ -212,7 +219,7 @@
       <module fileurl="file://$PROJECT_DIR$/calzone.iml" filepath="$PROJECT_DIR$/calzone.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="SvnBranchConfigurationManager">
@@ -223,11 +230,11 @@
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="libraryTable">
-    <library name="TeamCity 5 API">
+    <library name="TeamCity 6 API">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/common-api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/server-api.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/runtime-util.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/server-api.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

@@ -20,7 +20,7 @@ Try one of the following two methods depending on your TeamCity environment:
 Method 1: Copy calzone.zip to the plugins directory under your TeamCity
 data directory, then bounce TeamCity.
 
-Method 2: Copy calzone-server.jar to webapps/ROOT/WEB-INF/lib under your
+Method 2: Copy calzone.jar to webapps/ROOT/WEB-INF/lib under your
 TeamCity installation directory, then bounce TeamCity.
 
 Calzone should then be visible at:
