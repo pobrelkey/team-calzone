@@ -88,6 +88,10 @@
                             <label for="showTimeRemaining">Show Time Remaining</label>
                         </p>
                         <p>
+                            <form:checkbox id="showTimeSinceLastGood" path="showTimeSinceLastGood"/>
+                            <label for="showTimeSinceLastGood">Show Time Since Last Good Build</label>
+                        </p>
+                        <p>
                             <form:checkbox id="pendingInItalics" path="pendingInItalics"/>
                             <label for="pendingInItalics">Pending Builds In Italics</label>
                         </p>

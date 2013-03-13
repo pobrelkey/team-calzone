@@ -50,6 +50,11 @@ hr {
     color: #00BB00;
 }
 
+.lastGoodBuildDate {
+    color: #0000BB;
+    font-size: 60%;
+}
+
 .projectName {
     font-size: 24pt;
 	margin-bottom: 4pt;

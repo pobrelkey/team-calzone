@@ -6,17 +6,17 @@ public class BuildInfo implements Comparable<BuildInfo> {
     private final String buildName;
     private final Boolean green;
     private final boolean compileFailure;
-    private final Date lastGoodBuildDate;
+    private final Date timeSinceLastGoodBuild;
     private final boolean active;
     private final boolean failing;
     private final String timeRemaining;
     private final String responsibility;
 
-    public BuildInfo(String buildName, boolean green, boolean compileFailure, Date lastGoodBuildDate, boolean active, boolean failing, String timeRemaining, String responsibility) {
+    public BuildInfo(String buildName, boolean green, boolean compileFailure, Date timeSinceLastGoodBuild, boolean active, boolean failing, String timeRemaining, String responsibility) {
         this.buildName = buildName;
         this.green = green;
         this.compileFailure = compileFailure;
-        this.lastGoodBuildDate = lastGoodBuildDate;
+        this.timeSinceLastGoodBuild = timeSinceLastGoodBuild;
         this.active = active;
         this.failing = failing;
         this.timeRemaining = timeRemaining;
@@ -35,8 +35,8 @@ public class BuildInfo implements Comparable<BuildInfo> {
         return compileFailure;
     }
 
-    public Date getLastGoodBuildDate() {
-        return lastGoodBuildDate;
+    public Date getTimeSinceLastGoodBuild() {
+        return timeSinceLastGoodBuild;
     }
 
     public boolean isActive() {
@@ -67,11 +67,11 @@ public class BuildInfo implements Comparable<BuildInfo> {
         }
 
         // ...then sort by most recently broken first
-        if (this.getLastGoodBuildDate() != null && buildInfo.getLastGoodBuildDate() != null) {
-            return getLastGoodBuildDate().compareTo(buildInfo.getLastGoodBuildDate());
-        } else if (this.getLastGoodBuildDate() == null && buildInfo.getLastGoodBuildDate() != null) {
+        if (this.getTimeSinceLastGoodBuild() != null && buildInfo.getTimeSinceLastGoodBuild() != null) {
+            return getTimeSinceLastGoodBuild().compareTo(buildInfo.getTimeSinceLastGoodBuild());
+        } else if (this.getTimeSinceLastGoodBuild() == null && buildInfo.getTimeSinceLastGoodBuild() != null) {
             return 1;
-        } else if (this.getLastGoodBuildDate() != null && buildInfo.getLastGoodBuildDate() == null) {
+        } else if (this.getTimeSinceLastGoodBuild() != null && buildInfo.getTimeSinceLastGoodBuild() == null) {
             return -1;
         }
 

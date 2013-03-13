@@ -70,11 +70,11 @@ public class ResultsPageController extends BaseController {
 
         Status latestCompletedStatus = null;
         Boolean latestCompletedIsCompileFailure = false;
-        SBuild lastFinished = sBuildType.getLastFinished();
+        SBuild lastFinished = sBuildType.getLastChangesFinished();
         if (lastFinished != null && lastFinished.getStatusDescriptor().getStatus().equals(Status.UNKNOWN)) {
             // need to dig deeper for last build status - most recent build probably cancelled
             Date latestCompletedStatusDate = null;
-            List<SFinishedBuild> buildHistory = sBuildType.getHistory(false);
+            List<SFinishedBuild> buildHistory = sBuildType.getHistory(null,false,false);
             for (SFinishedBuild finishedBuild : buildHistory) {
                 Status status = finishedBuild.getStatusDescriptor().getStatus();
                 if (!status.equals(Status.UNKNOWN) && (latestCompletedStatusDate == null || finishedBuild.getStartDate().compareTo(latestCompletedStatusDate) > 0)) {
@@ -89,10 +89,10 @@ public class ResultsPageController extends BaseController {
             latestCompletedIsCompileFailure = lastFinished.getStatusDescriptor().getText().toLowerCase().contains("compilation fail");
         }
 
-        Date lastGoodBuildDate = null;
+        Date timeSinceLastGoodBuild = null;
         Build lastGoodBuild = sBuildType.getLastChangesSuccessfullyFinished();
         if (lastGoodBuild != null) {
-            lastGoodBuildDate = lastGoodBuild.getStartDate();
+            timeSinceLastGoodBuild = new Date(new Date().getTime() - lastGoodBuild.getStartDate().getTime());
         }
 
         if (latestCompletedStatus == null || latestCompletedStatus.equals(Status.UNKNOWN)) {
@@ -104,7 +104,7 @@ public class ResultsPageController extends BaseController {
         String responsibility = sBuildType.getResponsibilityInfo().getComment();
 
         if (goodBuild != null) {
-            builds.add(new BuildInfo(sBuildType.getName(), goodBuild, latestCompletedIsCompileFailure, lastGoodBuildDate, active, failingBuild, timeRemaining, responsibility));
+            builds.add(new BuildInfo(sBuildType.getName(), goodBuild, latestCompletedIsCompileFailure, timeSinceLastGoodBuild, active, failingBuild, timeRemaining, responsibility));
         }
     }
 
@@ -154,6 +154,7 @@ public class ResultsPageController extends BaseController {
         boolean blink = parameterAsBoolean(request, "blink");
         boolean showDividers = parameterAsBoolean(request, "showDividers");
         boolean showTimeRemaining = parameterAsBoolean(request, "showTimeRemaining");
+        boolean showTimeSinceLastGood = parameterAsBoolean(request, "showTimeSinceLastGood");
         int frequency = ServletRequestUtils.getIntParameter(request, "frequency", 5);
         double dissolveRate = ServletRequestUtils.getDoubleParameter(request, "dissolveRate", 1);
 
@@ -169,19 +170,20 @@ public class ResultsPageController extends BaseController {
         model.put("failFontSize", failFontSize);
         model.put("failFontSizes", FAILURE_FONT_SIZES);
         model.put("showTimeRemaining", showTimeRemaining);
+        model.put("showTimeSinceLastGood", showTimeSinceLastGood);
         model.put("pendingInItalics", pendingInItalics);
         model.put("runningInItalics", runningInItalics);
         model.put("frequency", frequency);
         model.put("frequencies", REFRESH_FREQUENCIES);
         model.put("dissolveRate", dissolveRate);
         model.put("dissolveRates", DISSOLVE_RATES);
-        model.put("formModel", new ResultsPageFormModel(buildsToDisplay, projectsToDisplay, failFontSize, dontShowGreenBuilds, runTogether, blink, showDividers, showTimeRemaining, pendingInItalics, runningInItalics, frequency, dissolveRate));
+        model.put("formModel", new ResultsPageFormModel(buildsToDisplay, projectsToDisplay, failFontSize, dontShowGreenBuilds, runTogether, blink, showDividers, showTimeRemaining, showTimeSinceLastGood, pendingInItalics, runningInItalics, frequency, dissolveRate));
 
         boolean isFragment = parameterAsBoolean(request, "fragment");
         if (isFragment) {
-            return new ModelAndView(calzone.resourcePath("results.jsp"), model);
+            return new ModelAndView("/plugins/calzone/results.jsp", model);
         } else {
-            return new ModelAndView(calzone.resourcePath("calzone.jsp"), model);
+            return new ModelAndView("/plugins/calzone/calzone.jsp", model);
         }
     }
 
@@ -234,6 +236,7 @@ public class ResultsPageController extends BaseController {
         private final boolean blink;
         private final boolean showDividers;
         private final boolean showTimeRemaining;
+        private final boolean showTimeSinceLastGood;
         private final boolean pendingInItalics;
         private final boolean runningInItalics;
 
@@ -245,8 +248,11 @@ public class ResultsPageController extends BaseController {
                                     boolean blink,
                                     boolean showDividers,
                                     boolean showTimeRemaining,
+                                    boolean showTimeSinceLastGood,
                                     boolean pendingInItalics,
-                                    boolean runningInItalics, int frequency, double dissolveRate) {
+                                    boolean runningInItalics,
+                                    int frequency,
+                                    double dissolveRate) {
             this.dontShowGreenBuilds = dontShowGreenBuilds;
             this.buildsToDisplay = buildsToDisplay;
             this.projectsToDisplay = projectsToDisplay;
@@ -255,6 +261,7 @@ public class ResultsPageController extends BaseController {
             this.blink = blink;
             this.showDividers = showDividers;
             this.showTimeRemaining = showTimeRemaining;
+            this.showTimeSinceLastGood = showTimeSinceLastGood;
             this.pendingInItalics = pendingInItalics;
             this.runningInItalics = runningInItalics;
             this.frequency = frequency;
@@ -291,6 +298,10 @@ public class ResultsPageController extends BaseController {
 
         public boolean isShowTimeRemaining() {
             return showTimeRemaining;
+        }
+
+        public boolean isShowTimeSinceLastGood() {
+            return showTimeSinceLastGood;
         }
 
         public boolean isPendingInItalics() {
