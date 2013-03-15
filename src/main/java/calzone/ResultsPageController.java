@@ -25,21 +25,22 @@ import java.util.TreeSet;
 
 
 public class ResultsPageController extends BaseController {
-    private final Calzone calzone;
-    private final SBuildServer server;
-    static private final String[] FAILURE_FONT_SIZES = new String[]{"18pt", "24pt", "30pt", "36pt", "42pt", "48pt", "60pt", "72pt", "84pt", "96pt", "112pt", "128pt", "144pt", "180pt", "216pt"};
-    static private final int[] REFRESH_FREQUENCIES = new int[]{5, 10, 15, 20, 30, 60, 120, 300};
+    private static final String[] FAILURE_FONT_SIZES = new String[]{"18pt", "24pt", "30pt", "36pt", "42pt", "48pt", "60pt", "72pt", "84pt", "96pt", "112pt", "128pt", "144pt", "180pt", "216pt"};
+    private static final int[] REFRESH_FREQUENCIES = new int[]{5, 10, 15, 20, 30, 60, 120, 300};
     private static final ValueWithLabel[] DISSOLVE_RATES = new ValueWithLabel[]{
-            new ValueWithLabel(1.0,  "direct transition"),
+            new ValueWithLabel(1.0, "direct transition"),
             new ValueWithLabel(0.25, "fast (.4s) dissolve"),
-            new ValueWithLabel(0.1,  "medium (1s) dissolve"),
+            new ValueWithLabel(0.1, "medium (1s) dissolve"),
             new ValueWithLabel(0.02, "slow (5s) dissolve")
     };
 
-    public ResultsPageController(SBuildServer server, Calzone calzone) {
+    private final SBuildServer server;
+    private final DayAndHourSinceFormatter dayAndHourSinceFormatter;
+
+    public ResultsPageController(SBuildServer server) {
         super(server);
         this.server = server;
-        this.calzone = calzone;
+        dayAndHourSinceFormatter = new DayAndHourSinceFormatter();
     }
 
     private void getCurrentRunStatus(SBuildType sBuildType, TreeSet<BuildInfo> builds, boolean pendingInItalics, boolean runningInItalics) {
@@ -74,7 +75,7 @@ public class ResultsPageController extends BaseController {
         if (lastFinished != null && lastFinished.getStatusDescriptor().getStatus().equals(Status.UNKNOWN)) {
             // need to dig deeper for last build status - most recent build probably cancelled
             Date latestCompletedStatusDate = null;
-            List<SFinishedBuild> buildHistory = sBuildType.getHistory(null,false,false);
+            List<SFinishedBuild> buildHistory = sBuildType.getHistory(null, false, false);
             for (SFinishedBuild finishedBuild : buildHistory) {
                 Status status = finishedBuild.getStatusDescriptor().getStatus();
                 if (!status.equals(Status.UNKNOWN) && (latestCompletedStatusDate == null || finishedBuild.getStartDate().compareTo(latestCompletedStatusDate) > 0)) {
@@ -89,11 +90,7 @@ public class ResultsPageController extends BaseController {
             latestCompletedIsCompileFailure = lastFinished.getStatusDescriptor().getText().toLowerCase().contains("compilation fail");
         }
 
-        Date timeSinceLastGoodBuild = null;
-        Build lastGoodBuild = sBuildType.getLastChangesSuccessfullyFinished();
-        if (lastGoodBuild != null) {
-            timeSinceLastGoodBuild = new Date(new Date().getTime() - lastGoodBuild.getStartDate().getTime());
-        }
+        String timeSinceLastGoodBuild = formattedTimeSinceLastGoodBuild(sBuildType);
 
         if (latestCompletedStatus == null || latestCompletedStatus.equals(Status.UNKNOWN)) {
             // don't know anything about this build yet (hasn't run?)
@@ -106,6 +103,11 @@ public class ResultsPageController extends BaseController {
         if (goodBuild != null) {
             builds.add(new BuildInfo(sBuildType.getName(), goodBuild, latestCompletedIsCompileFailure, timeSinceLastGoodBuild, active, failingBuild, timeRemaining, responsibility));
         }
+    }
+
+    private String formattedTimeSinceLastGoodBuild(SBuildType sBuildType) {
+        Build lastGoodBuild = sBuildType.getLastChangesSuccessfullyFinished();
+        return lastGoodBuild != null ? dayAndHourSinceFormatter.formatDateSince(lastGoodBuild.getStartDate()) : "";
     }
 
     private String formatMinutesAndSeconds(long timeInSeconds) {
@@ -123,6 +125,7 @@ public class ResultsPageController extends BaseController {
         return result.toString();
     }
 
+    @Override
     protected ModelAndView doHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String[] buildsToDisplay = ServletRequestUtils.getStringParameters(request, "buildsToDisplay");
         HashSet<String> buildsToDisplaySet = asSet(buildsToDisplay);

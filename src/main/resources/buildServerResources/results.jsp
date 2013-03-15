@@ -16,8 +16,8 @@
                 <c:forEach items="${project.redBuilds}" var="build" varStatus="status">
                     <span class="<c:choose><c:when test='${build.compileFailure}'>compileFail</c:when><c:otherwise>fail</c:otherwise></c:choose> <c:if test='${build.active}'>active</c:if>">
                         <c:out value="${build.buildName}"/>
-                        <c:if test="${showTimeSinceLastGood and build.timeSinceLastGoodBuild != null}">
-                            <span class="lastGoodBuildDate">(<fmt:formatDate value="${build.timeSinceLastGoodBuild}" pattern="D 'Days' H 'Hours'"/>)</span>
+                        <c:if test="${showTimeSinceLastGood and !(empty build.timeSinceLastGoodBuild)}">
+                            <span class="lastGoodBuildDate">(<c:out value="${build.timeSinceLastGoodBuild}"/>)</span>
                         </c:if>
                         <c:if test="${showTimeRemaining and !(empty build.timeRemaining)}">
                             <span class="<c:choose><c:when test="${build.failing}">fail</c:when><c:otherwise>pass</c:otherwise></c:choose>"> (<c:out value="${build.timeRemaining}"/>)</span>

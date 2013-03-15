@@ -1,18 +1,16 @@
 package calzone;
 
-import java.util.Date;
-
 public class BuildInfo implements Comparable<BuildInfo> {
     private final String buildName;
     private final Boolean green;
     private final boolean compileFailure;
-    private final Date timeSinceLastGoodBuild;
+    private final String timeSinceLastGoodBuild;
     private final boolean active;
     private final boolean failing;
     private final String timeRemaining;
     private final String responsibility;
 
-    public BuildInfo(String buildName, boolean green, boolean compileFailure, Date timeSinceLastGoodBuild, boolean active, boolean failing, String timeRemaining, String responsibility) {
+    public BuildInfo(String buildName, boolean green, boolean compileFailure, String timeSinceLastGoodBuild, boolean active, boolean failing, String timeRemaining, String responsibility) {
         this.buildName = buildName;
         this.green = green;
         this.compileFailure = compileFailure;
@@ -35,7 +33,7 @@ public class BuildInfo implements Comparable<BuildInfo> {
         return compileFailure;
     }
 
-    public Date getTimeSinceLastGoodBuild() {
+    public String getTimeSinceLastGoodBuild() {
         return timeSinceLastGoodBuild;
     }
 

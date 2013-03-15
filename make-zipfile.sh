@@ -2,4 +2,4 @@
 
 rm -f calzone.zip
 cd plugin
-zip -rv9 ../calzone.zip teamcity-plugin.xml server/calzone.jar
+zip -rv9 ../calzone.zip *

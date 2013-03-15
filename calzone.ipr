@@ -4,12 +4,18 @@
     <defaultAnt bundledAnt="true" />
   </component>
   <component name="ArtifactManager">
-    <artifact type="jar" build-on-make="true" name="calzone">
-      <output-path>$PROJECT_DIR$/plugin/server</output-path>
-      <root id="archive" name="calzone.jar">
-        <element id="module-output" name="calzone" />
-        <element id="file-copy" path="$PROJECT_DIR$/plugin/teamcity-plugin.xml" />
-        <element id="dir-copy" path="$PROJECT_DIR$/rsrc" />
+    <artifact build-on-make="true" name="calzonePlugin">
+      <output-path>$PROJECT_DIR$/out</output-path>
+      <root id="root">
+        <element id="archive" name="calzonePlugin.zip">
+          <element id="directory" name="server">
+            <element id="archive" name="calzone.jar">
+              <element id="module-output" name="calzone" />
+            </element>
+            <element id="file-copy" path="$PROJECT_DIR$/lib/joda-time-2.2.jar" />
+          </element>
+          <element id="file-copy" path="$PROJECT_DIR$/src/main/metadata/teamcity-plugin.xml" />
+        </element>
       </root>
     </artifact>
   </component>
@@ -216,7 +222,11 @@
   </component>
   <component name="ProjectCodeStyleSettingsManager">
     <option name="PER_PROJECT_SETTINGS">
-      <value />
+      <value>
+        <XML>
+          <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
+        </XML>
+      </value>
     </option>
   </component>
   <component name="ProjectModuleManager">
@@ -228,6 +238,17 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
