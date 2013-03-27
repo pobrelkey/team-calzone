@@ -1,128 +1,43 @@
 package calzone;
 
-import jetbrains.buildServer.Build;
+import calzone.model.BuildInfo;
+import calzone.model.ProjectInfo;
+import calzone.model.ResultsPageFormModel;
+import calzone.model.ValueWithLabel;
 import jetbrains.buildServer.controllers.BaseController;
-import jetbrains.buildServer.messages.Status;
-import jetbrains.buildServer.serverSide.SBuild;
 import jetbrains.buildServer.serverSide.SBuildServer;
 import jetbrains.buildServer.serverSide.SBuildType;
-import jetbrains.buildServer.serverSide.SFinishedBuild;
 import jetbrains.buildServer.serverSide.SProject;
-import jetbrains.buildServer.serverSide.SRunningBuild;
+import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 
 
 public class ResultsPageController extends BaseController {
     private static final String[] FAILURE_FONT_SIZES = new String[]{"18pt", "24pt", "30pt", "36pt", "42pt", "48pt", "60pt", "72pt", "84pt", "96pt", "112pt", "128pt", "144pt", "180pt", "216pt"};
     private static final int[] REFRESH_FREQUENCIES = new int[]{5, 10, 15, 20, 30, 60, 120, 300};
     private static final ValueWithLabel[] DISSOLVE_RATES = new ValueWithLabel[]{
-            new ValueWithLabel(1.0, "direct transition"),
-            new ValueWithLabel(0.25, "fast (.4s) dissolve"),
-            new ValueWithLabel(0.1, "medium (1s) dissolve"),
-            new ValueWithLabel(0.02, "slow (5s) dissolve")
+            new ValueWithLabel("direct transition", 1.0),
+            new ValueWithLabel("fast (.4s) dissolve", 0.25),
+            new ValueWithLabel("medium (1s) dissolve", 0.1),
+            new ValueWithLabel("slow (5s) dissolve", 0.02)
     };
 
     private final SBuildServer server;
-    private final DayAndHourSinceFormatter dayAndHourSinceFormatter;
+    private final PluginDescriptor pluginDescriptor;
+    private final BuildFormatter buildFormatter;
 
-    public ResultsPageController(SBuildServer server) {
+    public ResultsPageController(SBuildServer server, PluginDescriptor pluginDescriptor) {
         super(server);
         this.server = server;
-        dayAndHourSinceFormatter = new DayAndHourSinceFormatter();
-    }
-
-    private void getCurrentRunStatus(SBuildType sBuildType, TreeSet<BuildInfo> builds, boolean pendingInItalics, boolean runningInItalics) {
-        Boolean goodBuild = null;
-        boolean failingBuild = false;
-        String timeRemaining = null;
-        boolean active = false;
-
-        List<SRunningBuild> runningBuilds = sBuildType.getRunningBuilds();
-        boolean inProgress = !runningBuilds.isEmpty();
-        if (inProgress) {
-            active |= runningInItalics;
-            Status worstRunningBuildStatus = Status.UNKNOWN;
-            for (SRunningBuild runningBuild : runningBuilds) {
-                Status status = runningBuild.getStatusDescriptor().getStatus();
-                if (status != null && status.above(worstRunningBuildStatus)) {
-                    worstRunningBuildStatus = status;
-                    timeRemaining = formatMinutesAndSeconds(runningBuild.getEstimationForTimeLeft());
-                }
-            }
-            failingBuild = worstRunningBuildStatus.isFailed();
-            if (failingBuild) {
-                goodBuild = false;
-            }
-        }
-
-        active |= (pendingInItalics && sBuildType.getNumberQueued() > 0);
-
-        Status latestCompletedStatus = null;
-        Boolean latestCompletedIsCompileFailure = false;
-        SBuild lastFinished = sBuildType.getLastChangesFinished();
-        if (lastFinished != null && lastFinished.getStatusDescriptor().getStatus().equals(Status.UNKNOWN)) {
-            // need to dig deeper for last build status - most recent build probably cancelled
-            Date latestCompletedStatusDate = null;
-            List<SFinishedBuild> buildHistory = sBuildType.getHistory(null, false, false);
-            for (SFinishedBuild finishedBuild : buildHistory) {
-                Status status = finishedBuild.getStatusDescriptor().getStatus();
-                if (!status.equals(Status.UNKNOWN) && (latestCompletedStatusDate == null || finishedBuild.getStartDate().compareTo(latestCompletedStatusDate) > 0)) {
-                    lastFinished = finishedBuild;
-                    latestCompletedIsCompileFailure = finishedBuild.getStatusDescriptor().getText().toLowerCase().contains("compilation fail");
-                    latestCompletedStatusDate = finishedBuild.getStartDate();
-                }
-            }
-        }
-        if (lastFinished != null) {
-            latestCompletedStatus = lastFinished.getBuildStatus();
-            latestCompletedIsCompileFailure = lastFinished.getStatusDescriptor().getText().toLowerCase().contains("compilation fail");
-        }
-
-        String timeSinceLastGoodBuild = formattedTimeSinceLastGoodBuild(sBuildType);
-
-        if (latestCompletedStatus == null || latestCompletedStatus.equals(Status.UNKNOWN)) {
-            // don't know anything about this build yet (hasn't run?)
-        } else {
-            goodBuild = latestCompletedStatus.isSuccessful() && (goodBuild == null);
-        }
-
-        String responsibility = sBuildType.getResponsibilityInfo().getComment();
-
-        if (goodBuild != null) {
-            builds.add(new BuildInfo(sBuildType.getName(), goodBuild, latestCompletedIsCompileFailure, timeSinceLastGoodBuild, active, failingBuild, timeRemaining, responsibility));
-        }
-    }
-
-    private String formattedTimeSinceLastGoodBuild(SBuildType sBuildType) {
-        Build lastGoodBuild = sBuildType.getLastChangesSuccessfullyFinished();
-        return lastGoodBuild != null ? dayAndHourSinceFormatter.formatDateSince(lastGoodBuild.getStartDate()) : "";
-    }
-
-    private String formatMinutesAndSeconds(long timeInSeconds) {
-        StringBuilder result = new StringBuilder();
-        if (timeInSeconds < 0) {
-            result.append('-');
-        }
-        result.append(timeInSeconds / 60);
-        result.append(':');
-        long seconds = timeInSeconds % 60;
-        if (seconds < 10) {
-            result.append('0');
-        }
-        result.append(seconds);
-        return result.toString();
+        this.pluginDescriptor = pluginDescriptor;
+        final TimeFormatter timeFormatter = new TimeFormatter();
+        buildFormatter = new BuildFormatter(new FinishedBuildMaker(server, timeFormatter), new RunningBuildMaker(timeFormatter));
     }
 
     @Override
@@ -131,19 +46,18 @@ public class ResultsPageController extends BaseController {
         HashSet<String> buildsToDisplaySet = asSet(buildsToDisplay);
         String[] projectsToDisplay = ServletRequestUtils.getStringParameters(request, "projectsToDisplay");
         HashSet<String> projectsToDisplaySet = asSet(projectsToDisplay);
-        boolean pendingInItalics = parameterAsBoolean(request, "pendingInItalics");
-        boolean runningInItalics = parameterAsBoolean(request, "runningInItalics");
 
         TreeSet<String> buildNames = new TreeSet<String>();
         ArrayList<String> projectNames = new ArrayList<String>();
         TreeSet<ProjectInfo> projects = new TreeSet<ProjectInfo>();
+
         for (SProject sProject : server.getProjectManager().getProjects()) {
             projectNames.add(sProject.getName());
             TreeSet<BuildInfo> builds = new TreeSet<BuildInfo>();
             for (SBuildType sBuildType : sProject.getBuildTypes()) {
                 buildNames.add(sBuildType.getName());
                 if (isBuildInWhichWeAreInterested(sBuildType, buildsToDisplaySet, projectsToDisplaySet)) {
-                    getCurrentRunStatus(sBuildType, builds, pendingInItalics, runningInItalics);
+                    builds.add(buildFormatter.format(sBuildType));
                 }
             }
             if (!builds.isEmpty()) {
@@ -152,12 +66,13 @@ public class ResultsPageController extends BaseController {
         }
 
         String failFontSize = ServletRequestUtils.getStringParameter(request, "failFontSize", "72pt");
+        boolean runningInItalics = parameterAsBoolean(request, "runningInItalics");
         boolean dontShowGreenBuilds = parameterAsBoolean(request, "dontShowGreenBuilds");
         boolean runTogether = parameterAsBoolean(request, "runTogether");
         boolean blink = parameterAsBoolean(request, "blink");
         boolean showDividers = parameterAsBoolean(request, "showDividers");
         boolean showTimeRemaining = parameterAsBoolean(request, "showTimeRemaining");
-        boolean showTimeSinceLastGood = parameterAsBoolean(request, "showTimeSinceLastGood");
+        boolean showTimeSinceFirstFail = parameterAsBoolean(request, "showTimeSinceFirstFail");
         int frequency = ServletRequestUtils.getIntParameter(request, "frequency", 5);
         double dissolveRate = ServletRequestUtils.getDoubleParameter(request, "dissolveRate", 1);
 
@@ -173,20 +88,19 @@ public class ResultsPageController extends BaseController {
         model.put("failFontSize", failFontSize);
         model.put("failFontSizes", FAILURE_FONT_SIZES);
         model.put("showTimeRemaining", showTimeRemaining);
-        model.put("showTimeSinceLastGood", showTimeSinceLastGood);
-        model.put("pendingInItalics", pendingInItalics);
+        model.put("showTimeSinceFirstFail", showTimeSinceFirstFail);
         model.put("runningInItalics", runningInItalics);
         model.put("frequency", frequency);
         model.put("frequencies", REFRESH_FREQUENCIES);
         model.put("dissolveRate", dissolveRate);
         model.put("dissolveRates", DISSOLVE_RATES);
-        model.put("formModel", new ResultsPageFormModel(buildsToDisplay, projectsToDisplay, failFontSize, dontShowGreenBuilds, runTogether, blink, showDividers, showTimeRemaining, showTimeSinceLastGood, pendingInItalics, runningInItalics, frequency, dissolveRate));
+        model.put("formModel", new ResultsPageFormModel(buildsToDisplay, projectsToDisplay, failFontSize, dontShowGreenBuilds, runTogether, blink, showDividers, showTimeRemaining, showTimeSinceFirstFail, runningInItalics, frequency, dissolveRate));
 
         boolean isFragment = parameterAsBoolean(request, "fragment");
         if (isFragment) {
-            return new ModelAndView("/plugins/calzone/results.jsp", model);
+            return new ModelAndView(pluginDescriptor.getPluginResourcesPath("results.jsp"), model);
         } else {
-            return new ModelAndView("/plugins/calzone/calzone.jsp", model);
+            return new ModelAndView(pluginDescriptor.getPluginResourcesPath("calzone.jsp"), model);
         }
     }
 
@@ -208,119 +122,5 @@ public class ResultsPageController extends BaseController {
             }
         }
         return buildsToDisplaySet;
-    }
-
-    private static class ValueWithLabel {
-        private Object value;
-        private String label;
-
-        private ValueWithLabel(Object value, String label) {
-            this.label = label;
-            this.value = value;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-    }
-
-    private static class ResultsPageFormModel {
-        private final String[] buildsToDisplay;
-        private final String[] projectsToDisplay;
-        private final String failFontSize;
-        private final int frequency;
-        private final double dissolveRate;
-        private final boolean dontShowGreenBuilds;
-        private final boolean runTogether;
-        private final boolean blink;
-        private final boolean showDividers;
-        private final boolean showTimeRemaining;
-        private final boolean showTimeSinceLastGood;
-        private final boolean pendingInItalics;
-        private final boolean runningInItalics;
-
-        public ResultsPageFormModel(String[] buildsToDisplay,
-                                    String[] projectsToDisplay,
-                                    String failFontSize,
-                                    boolean dontShowGreenBuilds,
-                                    boolean runTogether,
-                                    boolean blink,
-                                    boolean showDividers,
-                                    boolean showTimeRemaining,
-                                    boolean showTimeSinceLastGood,
-                                    boolean pendingInItalics,
-                                    boolean runningInItalics,
-                                    int frequency,
-                                    double dissolveRate) {
-            this.dontShowGreenBuilds = dontShowGreenBuilds;
-            this.buildsToDisplay = buildsToDisplay;
-            this.projectsToDisplay = projectsToDisplay;
-            this.failFontSize = failFontSize;
-            this.runTogether = runTogether;
-            this.blink = blink;
-            this.showDividers = showDividers;
-            this.showTimeRemaining = showTimeRemaining;
-            this.showTimeSinceLastGood = showTimeSinceLastGood;
-            this.pendingInItalics = pendingInItalics;
-            this.runningInItalics = runningInItalics;
-            this.frequency = frequency;
-            this.dissolveRate = dissolveRate;
-        }
-
-        public String[] getBuildsToDisplay() {
-            return buildsToDisplay;
-        }
-
-        public String[] getProjectsToDisplay() {
-            return projectsToDisplay;
-        }
-
-        public String getFailFontSize() {
-            return failFontSize;
-        }
-
-        public boolean isDontShowGreenBuilds() {
-            return dontShowGreenBuilds;
-        }
-
-        public boolean isRunTogether() {
-            return runTogether;
-        }
-
-        public boolean isBlink() {
-            return blink;
-        }
-
-        public boolean isShowDividers() {
-            return showDividers;
-        }
-
-        public boolean isShowTimeRemaining() {
-            return showTimeRemaining;
-        }
-
-        public boolean isShowTimeSinceLastGood() {
-            return showTimeSinceLastGood;
-        }
-
-        public boolean isPendingInItalics() {
-            return pendingInItalics;
-        }
-
-        public boolean isRunningInItalics() {
-            return runningInItalics;
-        }
-
-        public int getFrequency() {
-            return frequency;
-        }
-
-        public double getDissolveRate() {
-            return dissolveRate;
-        }
     }
 }

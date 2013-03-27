@@ -12,15 +12,10 @@
     <script type="text/javascript" src="/plugins/calzone/prototype.js"></script>
     <script type="text/javascript" src="/plugins/calzone/calzone.js"></script>
     <style type="text/css">
-        <c:if test="${blink}">
-        .compileFail {
-            text-decoration: blink;
-        }
-
-        </c:if>
-        .fails {
+        .fails , .passed.failing {
             font-size: <c:out value="${failFontSize}"/>;
         }
+
     </style>
 </head>
 <body onload="refreshData(<c:out value="${frequency}"/>, <c:out value="${dissolveRate}"/>)">
@@ -97,13 +92,8 @@
                             </p>
 
                             <p>
-                                <form:checkbox id="showTimeSinceLastGood" path="showTimeSinceLastGood"/>
-                                <label for="showTimeSinceLastGood">Show Time Since Last Good Build</label>
-                            </p>
-
-                            <p>
-                                <form:checkbox id="pendingInItalics" path="pendingInItalics"/>
-                                <label for="pendingInItalics">Pending Builds In Italics</label>
+                                <form:checkbox id="showTimeSinceFirstFail" path="showTimeSinceFirstFail"/>
+                                <label for="showTimeSinceFirstFail">Show Time Since Last First Failure</label>
                             </p>
 
                             <p>

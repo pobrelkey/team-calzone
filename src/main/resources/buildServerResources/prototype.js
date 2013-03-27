@@ -171,7 +171,7 @@ var Class = (function() {
     switch (type) {
       case 'undefined':
       case 'function':
-      case 'unknown': return;
+      case 'none': return;
       case 'boolean': return object.toString();
     }
 

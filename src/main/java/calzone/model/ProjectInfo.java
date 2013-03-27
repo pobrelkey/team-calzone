@@ -1,4 +1,4 @@
-package calzone;
+package calzone.model;
 
 import java.util.Collection;
 import java.util.TreeSet;

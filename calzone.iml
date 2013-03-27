@@ -73,10 +73,10 @@
       </library>
     </orderEntry>
     <orderEntry type="library" scope="PROVIDED" name="TeamCity 6 API" level="project" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/joda-time-2.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/junit-4.10.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -85,7 +85,18 @@
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/junit-4.10.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/mockito-all-1.9.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/mockito-all-1.9.5.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jdom-1.1.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

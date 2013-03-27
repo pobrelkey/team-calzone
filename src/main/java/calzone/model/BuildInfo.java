@@ -1,24 +1,16 @@
-package calzone;
+package calzone.model;
 
 public class BuildInfo implements Comparable<BuildInfo> {
     private final String buildName;
-    private final Boolean green;
-    private final boolean compileFailure;
-    private final String timeSinceLastGoodBuild;
-    private final boolean active;
-    private final boolean failing;
-    private final String timeRemaining;
-    private final String responsibility;
+    private final CalzoneFinishedBuild lastFinished;
+    private final CalzoneRunningBuild runningBuild;
+    private final boolean responsibilityAssigned;
 
-    public BuildInfo(String buildName, boolean green, boolean compileFailure, String timeSinceLastGoodBuild, boolean active, boolean failing, String timeRemaining, String responsibility) {
+    public BuildInfo(String buildName, CalzoneFinishedBuild finishedBuild, CalzoneRunningBuild runningBuild, boolean responsibilityAssigned) {
         this.buildName = buildName;
-        this.green = green;
-        this.compileFailure = compileFailure;
-        this.timeSinceLastGoodBuild = timeSinceLastGoodBuild;
-        this.active = active;
-        this.failing = failing;
-        this.timeRemaining = timeRemaining;
-        this.responsibility = responsibility;
+        this.lastFinished = finishedBuild;
+        this.runningBuild = runningBuild;
+        this.responsibilityAssigned = responsibilityAssigned;
     }
 
     public String getBuildName() {
@@ -26,33 +18,42 @@ public class BuildInfo implements Comparable<BuildInfo> {
     }
 
     public Boolean isGreen() {
-        return green;
+        return lastFinished.getStatus().isGreen() && runningBuild.getStatus().isGreen();
     }
 
     public boolean isCompileFailure() {
-        return compileFailure;
+        return lastFinished.getStatus() == FinishedBuildStatus.compilationFailed;
     }
 
     public String getTimeSinceLastGoodBuild() {
-        return timeSinceLastGoodBuild;
+        return lastFinished.getTimeSinceFirstFailure();
     }
 
     public boolean isActive() {
-        return active;
+        return runningBuild.getStatus() != RunningBuildStatus.notRunning;
     }
 
     public boolean isFailing() {
-        return failing;
+        return runningBuild.getStatus() == RunningBuildStatus.failing;
     }
 
     public String getTimeRemaining() {
-        return timeRemaining;
+        return runningBuild.getTimeRemaining();
     }
 
-    public String getResponsibility() {
-        return responsibility;
+    public boolean isResponsibilityAssigned() {
+        return responsibilityAssigned;
     }
 
+    public CalzoneFinishedBuild getLastFinished() {
+        return lastFinished;
+    }
+
+    public CalzoneRunningBuild getRunningBuild() {
+        return runningBuild;
+    }
+
+    @Override
     public int compareTo(BuildInfo buildInfo) {
         // failing builds always sort first
         if (this.isGreen() != buildInfo.isGreen()) {

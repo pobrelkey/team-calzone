@@ -1,10 +1,8 @@
-
-
 var wasSuccessful = true;
 
 function setOpacity(element, opacity) {
-    if (element.filters){
-        element.style.filter = 'alpha(opacity='+(opacity*100)+')';
+    if (element.filters) {
+        element.style.filter = 'alpha(opacity=' + (opacity * 100) + ')';
     } else {
         element.style.opacity = opacity;
     }
@@ -23,15 +21,15 @@ function dissolveTo(newContent, rate) {
     $('content').innerHTML = newContent;
 
     var dissolveState = 0.0;
-    var dissolveIntervalId = setInterval(function(){
+    var dissolveIntervalId = setInterval(function () {
         dissolveState += rate;
         if (dissolveState >= 1) {
             clearInterval(dissolveIntervalId);
             setOpacity($('content'), 1);
             setOpacity($('oldContent'), 0);
-            $('oldContent').innerHTML='';
+            $('oldContent').innerHTML = '';
         } else {
-            setOpacity($('oldContent'), 1-dissolveState);
+            setOpacity($('oldContent'), 1 - dissolveState);
             setOpacity($('content'), dissolveState);
         }
     }, 100);
@@ -61,7 +59,7 @@ function refreshData(frequency, dissolveRate) {
         updateUrl,
         {
             frequency: frequency,
-            onSuccess: function(response) {
+            onSuccess: function (response) {
                 // WTF: even gets called when build server goes down!
                 if (response.responseText.indexOf('GOOD_RESPONSE') != -1) {
                     win(dissolveRate);

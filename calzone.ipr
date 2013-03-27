@@ -5,14 +5,13 @@
   </component>
   <component name="ArtifactManager">
     <artifact build-on-make="true" name="calzonePlugin">
-      <output-path>$PROJECT_DIR$/out</output-path>
+      <output-path>$USER_HOME$/.BuildServer/plugins</output-path>
       <root id="root">
         <element id="archive" name="calzonePlugin.zip">
           <element id="directory" name="server">
             <element id="archive" name="calzone.jar">
               <element id="module-output" name="calzone" />
             </element>
-            <element id="file-copy" path="$PROJECT_DIR$/lib/joda-time-2.2.jar" />
           </element>
           <element id="file-copy" path="$PROJECT_DIR$/src/main/metadata/teamcity-plugin.xml" />
         </element>
@@ -229,12 +228,19 @@
       </value>
     </option>
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="tim">
+      <words>
+        <w>calzone</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/calzone.iml" filepath="$PROJECT_DIR$/calzone.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="SvnBranchConfigurationManager">

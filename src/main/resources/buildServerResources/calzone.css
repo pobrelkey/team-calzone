@@ -19,34 +19,58 @@ hr {
 
 .fails {
     font-weight: bold;
-	margin-bottom: 4pt;
+    margin-bottom: 4pt;
     color: #FF0500;
 }
 
-.ok {
-    color: #00BB00;
-}
 
-.active {
-    font-style: italic;
-}
-
-.passes {
-    font-weight: bold;
-    font-size: 18pt;
-	margin-bottom: 4pt;
-    color: #00BB00;
-}
-
-.fail {
-    color: #FF0500;
-}
-
-.compileFail {
+.compilationFailed.notRunning {
     background-color: #FFFE01;
 }
 
-.pass {
+.compilationFailed.notRunning.blink {
+    text-decoration: blink
+}
+
+.failed.passing.italics, .failed.failing.italics {
+    font-style: italic;
+}
+
+.failed.notRunning.italics {
+    font-style: normal;
+}
+
+.passed {
+    font-weight: bold;
+    font-size: 18pt;
+    margin-bottom: 4pt;
+    color: #00BB00;
+}
+
+.passed.failing {
+    color: #FF0500;
+}
+
+.none {
+    font-weight: bold;
+    font-size: 18pt;
+    margin-bottom: 4pt;
+    color: #929292;
+}
+
+.passed.italics {
+    font-style: italic;
+}
+
+.timeRemaining.failing {
+    color: #FF0500;
+}
+
+.timeRemaining.passing {
+    color: #00BB00;
+}
+
+.ok {
     color: #00BB00;
 }
 
@@ -57,7 +81,7 @@ hr {
 
 .projectName {
     font-size: 24pt;
-	margin-bottom: 4pt;
+    margin-bottom: 4pt;
     color: #929292;
 }
 
@@ -84,12 +108,12 @@ div#bottom {
     width: 100%;
 }
 
-
 div#bottomTabDiv {
     text-align: right;
     margin: 0px;
     padding: 0px;
 }
+
 span#bottomTab {
     border: 1px solid #FFCC00;
     border-right-style: none;
